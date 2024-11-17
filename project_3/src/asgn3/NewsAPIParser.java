@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 class NewsAPIParser extends Parser<ArticleList>{
 
     /**
@@ -24,7 +27,7 @@ class NewsAPIParser extends Parser<ArticleList>{
     }
 
     /**
-     * Parses a JSON string into a new ArticleList object and displays it.
+     * Parses a JSON string into a new ArticleList object.
      * @param   jsonString a JSON-formatted string representing NewsAPI results
      */
     Optional<ArticleList> parse(String jsonString){

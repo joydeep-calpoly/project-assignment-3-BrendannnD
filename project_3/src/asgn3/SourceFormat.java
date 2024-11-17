@@ -15,6 +15,12 @@ class SourceFormat {
     Sources source;
     Logger logger;
 
+    /**
+     * Constructs a new SourceFormat object
+     * @param format    a format enum, e.g. Formats.NEWSAPI
+     * @param source    a source enum, e.g. Sources.URL
+     * @param logger    a logger for errors
+     */
     SourceFormat(Formats format, Sources source, Logger logger) {
         this.format = format;
         this.source = source;
@@ -51,6 +57,10 @@ class SourceFormat {
         }
     }
 
+    /**
+     * Formats a url input into a JSON string
+     * @param urlString     a url link
+     */
     private String urlToStringFormat (String urlString) {
         try {
             URL url = new URI(urlString).toURL();
@@ -71,9 +81,13 @@ class SourceFormat {
         return "ERROR";
     }
 
+    /**
+     * Formats a file input into a JSON string
+     * @param fileName     a file name
+     */
     private String fileToStringFormat(String fileName) {
         try {
-            Path filePath = Paths.get("inputs/simple.txt");
+            Path filePath = Paths.get(fileName);
             return Files.readString(filePath);
         } catch (Exception e) {
             logger.warning("Error parsing JSON from file: " + e.getMessage());

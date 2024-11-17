@@ -29,7 +29,7 @@ public class SimpleParser extends Parser<SimpleArticle>{
     }
 
     /**
-     * Parses a JSON string into a new SimpleArticle object and displays it.
+     * Parses a JSON string into a new SimpleArticle object.
      * @param   jsonString a JSON-formatted string representing a SimpleArticle
      */
     Optional<SimpleArticle> parse(String jsonString) {

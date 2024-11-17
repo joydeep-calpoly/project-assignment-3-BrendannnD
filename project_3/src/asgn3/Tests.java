@@ -3,7 +3,12 @@ package asgn3;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import static org.assertj.core.api.Assertions.assertThat;
 
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,6 +25,7 @@ public class Tests {
 
     private SimpleParser simpleParser;
 
+
     /**
      * Resets test parsers and loggers before each test.
      */
@@ -28,13 +34,14 @@ public class Tests {
         mockLogger = Mockito.mock(Logger.class);
         newsAPIParser = new NewsAPIParser(mockLogger);
         simpleParser = new SimpleParser(mockLogger);
+
     }
 
     /**
      * Tests ArticleList methods with a single valid article from a String
      */
     @Test
-    public void testValidArticle(){
+    public void testValidArticle() {
         String jsonInput = "{\n" +
                 "  \"status\": \"ok\",\n" +
                 "  \"totalResults\": 1,\n" +
@@ -57,12 +64,12 @@ public class Tests {
         assertEquals(1, articleList.getArticles().size());
         ArticleList.Article equalArticle = new ArticleList.Article(null, null, "Test title", "Test description", "Test URL", null, Date.from(Instant.parse("2021-03-24T22:32:00Z")), null);
         assertEquals(equalArticle, parsedArticle);
-        assertNotEquals(new ArticleList.Article(null,null,null,null,null,null,null,null),
+        assertNotEquals(new ArticleList.Article(null, null, null, null, null, null, null, null),
                 articleList.getArticles().getFirst());
         assertEquals(parsedArticle.getTitle(), "Test title");
         assertEquals(parsedArticle.getDescription(), "Test description");
         assertEquals(parsedArticle.getURL(), "Test URL");
-        assertEquals(parsedArticle.getPublishedAt(),Date.from(Instant.parse("2021-03-24T22:32:00Z")));
+        assertEquals(parsedArticle.getPublishedAt(), Date.from(Instant.parse("2021-03-24T22:32:00Z")));
         assertEquals(parsedArticle.getAuthor(), "Test author");
         assertEquals(parsedArticle.getContent(), "Test content");
         assertEquals(parsedArticle.getUrlToImage(), "Test image URL");
@@ -105,7 +112,7 @@ public class Tests {
      * Tests an ArticleList from a String with an article missing all essential fields.
      */
     @Test
-    public void testMissingAllFields(){
+    public void testMissingAllFields() {
         String jsonInput = "{\n" +
                 "  \"status\": \"ok\",\n" +
                 "  \"totalResults\": 1,\n" +
@@ -126,7 +133,7 @@ public class Tests {
         assertNull(equalArticle.getPublishedAt());
         assertNull(equalArticle.getTitle());
         assertNull(equalArticle.getURL());
-        assertEquals(equalArticle.getInvalidFields(), Arrays.asList("title", "description", "publishedAt","url"));
+        assertEquals(equalArticle.getInvalidFields(), Arrays.asList("title", "description", "publishedAt", "url"));
     }
 
     /**
@@ -208,7 +215,7 @@ public class Tests {
                 "}";
 
         Optional<ArticleList> articleList = newsAPIParser.parse(jsonInput);
-        if(articleList.isPresent()) fail();
+        if (articleList.isPresent()) fail();
         verify(mockLogger, times(1)).warning(contains("Error parsing JSON"));
     }
 
@@ -233,7 +240,7 @@ public class Tests {
                 "  ]\n" +
                 "}";
         Optional<ArticleList> articleList = newsAPIParser.parse(jsonInput);
-        if(articleList.isPresent()) fail();
+        if (articleList.isPresent()) fail();
         verify(mockLogger, times(1)).warning(contains("Error parsing JSON"));
     }
 
@@ -251,12 +258,12 @@ public class Tests {
         SimpleArticle simpleArticle = simpleParser.parse(jsonInput).orElseThrow(() -> new AssertionError("Parse failed"));
         SimpleArticle equalArticle = new SimpleArticle("Title", "Description", "URL", Date.from(Instant.parse("2021-04-16T09:53:23Z")));
         assertEquals(equalArticle, simpleArticle);
-        assertNotEquals(new SimpleArticle(null,null,null,null),
+        assertNotEquals(new SimpleArticle(null, null, null, null),
                 simpleArticle);
         assertEquals(simpleArticle.getTitle(), "Title");
         assertEquals(simpleArticle.getDescription(), "Description");
         assertEquals(simpleArticle.getURL(), "URL");
-        assertEquals(simpleArticle.getPublishedAt(),Date.from(Instant.parse("2021-04-16T09:53:23Z")));
+        assertEquals(simpleArticle.getPublishedAt(), Date.from(Instant.parse("2021-04-16T09:53:23Z")));
         assertTrue(simpleArticle.getInvalidFields().isEmpty());
         assertEquals(simpleArticle.toString(), "Title: Title\nDescription: Description" +
                 "\nPublished at: Fri Apr 16 02:53:23 PDT 2021\nURL: URL");
@@ -272,9 +279,9 @@ public class Tests {
                 "  \"url\": \"URL\"\n" +
                 "}";
         SimpleArticle simpleArticle = simpleParser.parse(jsonInput).orElseThrow(() -> new AssertionError("Parse failed"));
-        SimpleArticle equalArticle = new SimpleArticle(null, "Description", "URL",null);
+        SimpleArticle equalArticle = new SimpleArticle(null, "Description", "URL", null);
         assertEquals(equalArticle, simpleArticle);
-        assertNotEquals(new SimpleArticle(null,null,null,null),
+        assertNotEquals(new SimpleArticle(null, null, null, null),
                 simpleArticle);
         assertNull(simpleArticle.getTitle());
         assertEquals(simpleArticle.getDescription(), "Description");
@@ -291,15 +298,15 @@ public class Tests {
         String jsonInput = "{\n" +
                 "}";
         SimpleArticle simpleArticle = simpleParser.parse(jsonInput).orElseThrow(() -> new AssertionError("Parse failed"));
-        SimpleArticle equalArticle = new SimpleArticle(null, null, null,null);
+        SimpleArticle equalArticle = new SimpleArticle(null, null, null, null);
         assertEquals(equalArticle, simpleArticle);
-        assertNotEquals(new SimpleArticle(null,"Description",null,null),
+        assertNotEquals(new SimpleArticle(null, "Description", null, null),
                 simpleArticle);
         assertNull(simpleArticle.getTitle());
         assertNull(simpleArticle.getDescription());
         assertNull(simpleArticle.getURL());
         assertNull(simpleArticle.getPublishedAt());
-        assertEquals(simpleArticle.getInvalidFields(), Arrays.asList("title", "description","publishedAt","url"));
+        assertEquals(simpleArticle.getInvalidFields(), Arrays.asList("title", "description", "publishedAt", "url"));
     }
 
     /**
@@ -329,4 +336,38 @@ public class Tests {
         if (simpleArticle.isPresent()) fail();
         verify(mockLogger, times(1)).warning(contains("Error parsing JSON"));
     }
+
+    /**
+     * Verifies that the SourceFormat correctly visits a simple file - if this test passes,
+     * it must have dispatched the SimpleParser or it wouldn't print anything
+     */
+    @Test
+    public void testVisitorSimpleFile() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+        new SourceFormat(Formats.SIMPLE,Sources.FILE,mockLogger).parse("inputs/testsimple.txt");
+        String capturedOutput = outputStream.toString();
+        String expectedOutput = "Title: test title\nDescription: test description" +
+                "\nPublished at: Thu Apr 15 17:00:00 PDT 2021\nURL: test url";
+        assertThat(expectedOutput).isEqualToIgnoringWhitespace(capturedOutput);
+    }
+
+    /**
+     * Verifies that the SourceFormat correctly visits a NewsAPI file - if this test passes,
+     * it must have dispatched the NewsAPIParser or it wouldn't print anything
+     */
+    @Test
+    public void testVisitorNewsAPIFile() {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(outputStream);
+        System.setOut(printStream);
+        new SourceFormat(Formats.NEWSAPI,Sources.FILE,mockLogger).parse("inputs/testnewsapi.txt");
+        String capturedOutput = outputStream.toString();
+        String expectedOutput = "Title: test title\nDescription: test description" +
+                "\nPublished at: Thu Apr 15 17:00:00 PDT 2021\nURL: test url";
+        assertThat(expectedOutput).isEqualToIgnoringWhitespace(capturedOutput);
+    }
+
+
 }

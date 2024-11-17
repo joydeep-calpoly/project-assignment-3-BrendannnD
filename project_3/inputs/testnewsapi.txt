@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "totalResults": 1,
+  "articles": [
+        {
+            "title": "test title",
+            "description": "test description",
+            "url": "test url",
+            "publishedAt": "2021-04-16T00:00:00Z"
+        }
+  ]
+}
